@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+shapely = {version = "==1.8.2"}
+black = {version = "==22.3.0"}
+pylint = {version = "==2.13.8"}
+sodapy = {version = "==2.1.1"}
+matplotlib = "*"
+
+[requires]
+python_version = "3.6"
