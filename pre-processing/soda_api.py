@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 from datetime import datetime
 from matplotlib import pyplot
+import sqlalchemy as sql
+from sqlalchemy import create_engine
 
 SODA_TOKEN = "OYDc2QFddRUsFWLu19VnHnTp3"
 ZONE_IDS = ["90", "100", "107", "137", "164", "170", "186", "234"]
@@ -61,16 +63,19 @@ def make_dirs(dir_path: Path):
 
 
 class SodaApi:
-    def __init__(self):
+    def __init__(self, debug=False):
         self.dataset_id = "rebk-rr49"
         self.soda_client = Socrata("data.cityofnewyork.us", SODA_TOKEN)
+        self.pg_url = "postgresql://postgres:hunter2022@database-1.cpwa86v6hjzb.ap-northeast-2.rds.amazonaws.com:5432"
+        self.engine = create_engine(self.pg_url, echo=debug, echo_pool=debug, future=True)
+        self.metadata = sql.MetaData(bind=self.engine)
 
     def get_filtered_location(
         self,
         pickup_id: int,
         dropoff_id: int,
         where_clause: str = "date_extract_hh(pickup_datetime) between 6 and 20",
-        select_clause: str = "hvfhs_license_num, pickup_datetime, dropoff_datetime",
+        select_clause: str = "pickup_datetime, dropoff_datetime, pulocationid, dolocationid",
     ) -> dict:
         """
         Returns the data back with fitlering on pickup and drop of location.
@@ -92,50 +97,50 @@ class SodaApi:
         return trip_data
 
 
-    def generate_arrival_and_travel_time(self, trip_data: dict, output_folder: Path, dropoff_id: int):
-        """
-        Generates the distribution for inter-arrival times and the travel times.
-        """
-        inter_arrival = []
-        travel = []
-        travel.append(self.compute_travel_time[trip_data[0]])
-        for i, trip in enumerate(trip_data[1:]):
-            travel.append(self.compute_travel_time(trip))
-            inter_arrival.append(self.compute_inter_arrival_time(trip, trip_data[i - 1])
-        out_file_travel = output_folder / f"{dropoff_id}_travel.png"
-        out_file_arrival = output_folder / f"{dropoff_id}_arrival.png"
-        make_dirs(out_file_travel)
-        make_dirs(out_file_arrival)
-        self.save_histogram_plot(travel, out_file_travel)
-        self.save_histogram_plot(inter_arrival, out_file_arrival)
+    # def generate_arrival_and_travel_time(self, trip_data: dict, output_folder: Path, dropoff_id: int):
+    #     """
+    #     Generates the distribution for inter-arrival times and the travel times.
+    #     """
+    #     inter_arrival = []
+    #     travel = []
+    #     travel.append(self.compute_travel_time[trip_data[0]])
+    #     for i, trip in enumerate(trip_data[1:]):
+    #         travel.append(self.compute_travel_time(trip))
+    #         inter_arrival.append(self.compute_inter_arrival_time(trip, trip_data[i - 1])
+    #     out_file_travel = output_folder / f"{dropoff_id}_travel.png"
+    #     out_file_arrival = output_folder / f"{dropoff_id}_arrival.png"
+    #     make_dirs(out_file_travel)
+    #     make_dirs(out_file_arrival)
+    #     self.save_histogram_plot(travel, out_file_travel)
+    #     self.save_histogram_plot(inter_arrival, out_file_arrival)
 
 
-    @staticmethod
-    def compute_travel_time(trip: json) -> float:
-        """
-        Returns the travel time for this trip.
-        """
-        start = datetime.strptime(trip["pickup_datetime"], "%Y-%m-%dT%H:%M:%S.%f")
-        end = datetime.strptime(trip["dropoff_datetime"], "%Y-%m-%dT%H:%M:%S.%f")
-        duration = (end - start).total_seconds()
-        return duration
+    # @staticmethod
+    # def compute_travel_time(trip: json) -> float:
+    #     """
+    #     Returns the travel time for this trip.
+    #     """
+    #     start = datetime.strptime(trip["pickup_datetime"], "%Y-%m-%dT%H:%M:%S.%f")
+    #     end = datetime.strptime(trip["dropoff_datetime"], "%Y-%m-%dT%H:%M:%S.%f")
+    #     duration = (end - start).total_seconds()
+    #     return duration
 
 
-    @staticmethod
-    def compute_inter_arrival_time(trip, previous_trip) -> float:
-        """
-        Returns the inter-arrival time between 2 trips.
-        """
-        first = datetime.strptime(trip["pickup_datetime"], "%Y-%m-%dT%H:%M:%S.%f")
-        second = datetime.strptime(previous_trip["pickup_datetime"], "%Y-%m-%dT%H:%M:%S.%f")
-        time_diff = (second - first).total_seconds()
-        return time_diff
+    # @staticmethod
+    # def compute_inter_arrival_time(trip, previous_trip) -> float:
+    #     """
+    #     Returns the inter-arrival time between 2 trips.
+    #     """
+    #     first = datetime.strptime(trip["pickup_datetime"], "%Y-%m-%dT%H:%M:%S.%f")
+    #     second = datetime.strptime(previous_trip["pickup_datetime"], "%Y-%m-%dT%H:%M:%S.%f")
+    #     time_diff = (second - first).total_seconds()
+    #     return time_diff
 
-    @staticmethod
-    def save_histogram_plot(plt_data: list, output_file: Path):
-        """
-        Saves the histograms to file.
-        """
+    # @staticmethod
+    # def save_histogram_plot(plt_data: list, output_file: Path):
+    #     """
+    #     Saves the histograms to file.
+    #     """
         
 
 
@@ -143,15 +148,20 @@ def main():
     """
     Main.
     """
-    zone_ids = [234, 107]
     soda_api = SodaApi()
-    for pickup in zone_ids:
-        for dropoff in zone_ids:
+    for pickup in ZONE_IDS:
+        for dropoff in ZONE_IDS:
             this_trip = soda_api.get_filtered_location(pickup, dropoff)
+            # print(this_trip[0])
+
+            trip_data_table = sql.Table('trip_data_day_time', soda_api.metadata, autoload_with=soda_api.engine)
+            with soda_api.engine.connect() as conn:
+                print(f"Writing {len(this_trip)} rows to the database")
+                conn.execute(trip_data_table.insert(), this_trip)
+                conn.commit()
 
 
 
-            sys.exit()
 
             
 

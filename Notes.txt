@@ -1,0 +1,140 @@
+Simulation Presentation:
+1) Literature review.
+2) inovation - doing things differently from other people, 
+3) why is this important - significance. Carbon emissions is an example of this.
+4) Dimension reduction from the data
+5) Fix target process definition. Travel time of customer is the cost function. Target process is the graph/network transportation model.
+6) Penalty for lost customers.
+7) Total # of miles & travel time per customer. How to tally those.
+
+
+
+
+Got 5424 trip data rows for pickup id 90 and dropoff id 90
+Writing 5424 rows to the database
+Got 6085 trip data rows for pickup id 90 and dropoff id 100
+Writing 6085 rows to the database
+Got 9414 trip data rows for pickup id 90 and dropoff id 107
+Writing 9414 rows to the database
+Got 7988 trip data rows for pickup id 90 and dropoff id 137
+Writing 7988 rows to the database
+Got 10341 trip data rows for pickup id 90 and dropoff id 164
+Writing 10341 rows to the database
+Got 14751 trip data rows for pickup id 90 and dropoff id 170
+Writing 14751 rows to the database
+Got 9404 trip data rows for pickup id 90 and dropoff id 186
+Writing 9404 rows to the database
+Got 10611 trip data rows for pickup id 90 and dropoff id 234
+Writing 10611 rows to the database
+Got 4317 trip data rows for pickup id 100 and dropoff id 90
+Writing 4317 rows to the database
+Got 3008 trip data rows for pickup id 100 and dropoff id 100
+Writing 3008 rows to the database
+Got 4331 trip data rows for pickup id 100 and dropoff id 107
+Writing 4331 rows to the database
+Got 4605 trip data rows for pickup id 100 and dropoff id 137
+Writing 4605 rows to the database
+Got 5851 trip data rows for pickup id 100 and dropoff id 164
+Writing 5851 rows to the database
+Got 7835 trip data rows for pickup id 100 and dropoff id 170
+Writing 7835 rows to the database
+Got 4555 trip data rows for pickup id 100 and dropoff id 186
+Writing 4555 rows to the database
+Got 8799 trip data rows for pickup id 100 and dropoff id 234
+Writing 8799 rows to the database
+Got 8896 trip data rows for pickup id 107 and dropoff id 90
+Writing 8896 rows to the database
+Got 6900 trip data rows for pickup id 107 and dropoff id 100
+Writing 6900 rows to the database
+Got 6395 trip data rows for pickup id 107 and dropoff id 107
+Writing 6395 rows to the database
+Got 8525 trip data rows for pickup id 107 and dropoff id 137
+Writing 8525 rows to the database
+Got 10600 trip data rows for pickup id 107 and dropoff id 164
+Writing 10600 rows to the database
+Got 15703 trip data rows for pickup id 107 and dropoff id 170
+Writing 15703 rows to the database
+Got 17464 trip data rows for pickup id 107 and dropoff id 186
+Writing 17464 rows to the database
+Got 11431 trip data rows for pickup id 107 and dropoff id 234
+Writing 11431 rows to the database
+Got 7180 trip data rows for pickup id 137 and dropoff id 90
+Writing 7180 rows to the database
+Got 7172 trip data rows for pickup id 137 and dropoff id 100
+Writing 7172 rows to the database
+Got 7951 trip data rows for pickup id 137 and dropoff id 107
+Writing 7951 rows to the database
+Got 4206 trip data rows for pickup id 137 and dropoff id 137
+Writing 4206 rows to the database
+Got 8973 trip data rows for pickup id 137 and dropoff id 164
+Writing 8973 rows to the database
+Got 11353 trip data rows for pickup id 137 and dropoff id 170
+Writing 11353 rows to the database
+Got 14743 trip data rows for pickup id 137 and dropoff id 186
+Writing 14743 rows to the database
+Got 12866 trip data rows for pickup id 137 and dropoff id 234
+Writing 12866 rows to the database
+Got 8031 trip data rows for pickup id 164 and dropoff id 90
+Writing 8031 rows to the database
+Got 6318 trip data rows for pickup id 164 and dropoff id 100
+Writing 6318 rows to the database
+Got 8532 trip data rows for pickup id 164 and dropoff id 107
+Writing 8532 rows to the database
+Got 9082 trip data rows for pickup id 164 and dropoff id 137
+Writing 9082 rows to the database
+Got 6168 trip data rows for pickup id 164 and dropoff id 164
+Writing 6168 rows to the database
+Got 10892 trip data rows for pickup id 164 and dropoff id 170
+Writing 10892 rows to the database
+Got 8149 trip data rows for pickup id 164 and dropoff id 186
+Writing 8149 rows to the database
+Got 13878 trip data rows for pickup id 164 and dropoff id 234
+Writing 13878 rows to the database
+Got 11501 trip data rows for pickup id 170 and dropoff id 90
+Writing 11501 rows to the database
+Got 9766 trip data rows for pickup id 170 and dropoff id 100
+Writing 9766 rows to the database
+Got 13826 trip data rows for pickup id 170 and dropoff id 107
+Writing 13826 rows to the database
+Got 10817 trip data rows for pickup id 170 and dropoff id 137
+Writing 10817 rows to the database
+Got 10755 trip data rows for pickup id 170 and dropoff id 164
+Writing 10755 rows to the database
+Got 10290 trip data rows for pickup id 170 and dropoff id 170
+Writing 10290 rows to the database
+Got 19078 trip data rows for pickup id 170 and dropoff id 186
+Writing 19078 rows to the database
+Got 22641 trip data rows for pickup id 170 and dropoff id 234
+Writing 22641 rows to the database
+Got 5532 trip data rows for pickup id 186 and dropoff id 90
+Writing 5532 rows to the database
+Got 4035 trip data rows for pickup id 186 and dropoff id 100
+Writing 4035 rows to the database
+Got 8787 trip data rows for pickup id 186 and dropoff id 107
+Writing 8787 rows to the database
+Got 9466 trip data rows for pickup id 186 and dropoff id 137
+Writing 9466 rows to the database
+Got 5723 trip data rows for pickup id 186 and dropoff id 164
+Writing 5723 rows to the database
+Got 12578 trip data rows for pickup id 186 and dropoff id 170
+Writing 12578 rows to the database
+Got 2908 trip data rows for pickup id 186 and dropoff id 186
+Writing 2908 rows to the database
+Got 10457 trip data rows for pickup id 186 and dropoff id 234
+Writing 10457 rows to the database
+Got 8237 trip data rows for pickup id 234 and dropoff id 90
+Writing 8237 rows to the database
+Got 9038 trip data rows for pickup id 234 and dropoff id 100
+Writing 9038 rows to the database
+Got 9493 trip data rows for pickup id 234 and dropoff id 107
+Writing 9493 rows to the database
+Got 11601 trip data rows for pickup id 234 and dropoff id 137
+Writing 11601 rows to the database
+Got 12279 trip data rows for pickup id 234 and dropoff id 164
+Writing 12279 rows to the database
+Got 20567 trip data rows for pickup id 234 and dropoff id 170
+Writing 20567 rows to the database
+Got 14882 trip data rows for pickup id 234 and dropoff id 186
+Writing 14882 rows to the database
+Got 9976 trip data rows for pickup id 234 and dropoff id 234
+Writing 9976 rows to the database

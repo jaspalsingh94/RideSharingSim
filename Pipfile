@@ -11,6 +11,9 @@ black = {version = "==22.3.0"}
 pylint = {version = "==2.13.8"}
 sodapy = {version = "==2.1.1"}
 matplotlib = "*"
+psycopg2-binary = "*"
+# {version = "==2.7.5"}
+sqlalchemy = "*"
 
 [requires]
 python_version = "3.6"
