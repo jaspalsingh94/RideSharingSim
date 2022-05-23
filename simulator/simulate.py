@@ -1,5 +1,5 @@
-from simulator.object_model import Customer
-from simulator.generate_random import gen_expon
+from object_model import Customer
+from generate_random import gen_expon
 import scipy.stats as st
 
 # default to 4 hours: 14400
@@ -22,11 +22,11 @@ def generate_customer_list(total_time = 3600):
         print(f"Customer name: {customers[i].name}")
         print(f"Customer arrival: {customers[i].arrival}")
         print(f"Customer pickup: {customers[i].pickup}")
-        print(f"Customer dest: {customers[i].dest}\n")
+        print(f"Customer dropoff: {customers[i].dropoff}\n")
     i = -1
     print(f"Customer name: {customers[i].name}")
     print(f"Customer arrival: {customers[i].arrival}")
     print(f"Customer pickup: {customers[i].pickup}")
-    print(f"Customer dest: {customers[i].dest}\n")
+    print(f"Customer dropoff: {customers[i].dropoff}\n")
 
 generate_customer_list()

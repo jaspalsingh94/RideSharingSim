@@ -1,6 +1,6 @@
 import uuid
 from collections import deque
-
+from collections import defaultdict
 
 class Vehicle():
   WAIT = 1
@@ -14,6 +14,7 @@ class Vehicle():
     self.dest = dest 	# SET() 
     self.status = self.WAIT # WAIT, TO_CUSTOMER, TO_DESTINATION
     self.path = deque()     # From current to last destination
+    self.dest_customer = defaultdict(list) # dest_customer[node_id] =  [ customer_id s ]
     self.customer_ids = set()
     self.total_miles  = 0#add up as you go
 
@@ -32,7 +33,7 @@ class Vehicle():
     print("{} vehicle has arrived destiation {}".format(self.name, self.dest))
     
   def __repr__(self):
-    return "name:" + self.name + " at "+ str(self.node) + ", path:" + str(self.path) + " customer_destination:" + str(self.dest) 
+    return "name:" + self.name + " at "+ str(self.node) + ", path:" + str(self.path) + " destination:" + str(self.dest) 
   def __str__(self):
-    return "name:" + self.name + " at "+ str(self.node) + ", path:" + str(self.path) + " customer_destination:" + str(self.dest) 
+    return "name:" + self.name + " at "+ str(self.node) + ", path:" + str(self.path) + " destination:" + str(self.dest) 
       

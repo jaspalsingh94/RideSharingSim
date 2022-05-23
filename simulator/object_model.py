@@ -49,12 +49,12 @@ class Customer:
         self.name = id
         self.arrival = arrival_time
         self.pickup = generate_pickup_zone()
-        self.dest = generate_dropoff_zone()
+        self.dropoff = generate_dropoff_zone()
 
     def __repr__(self):
-        return "name:" + str(self.name) + ", arrival: "+ str(self.arrival) + ", pickup:" + str(self.pickup) + " dest:" + str(self.dest) 
+        return "name:" + str(self.name) + ", arrival: "+ str(self.arrival) + ", pickup:" + str(self.pickup) + " dropoff:" + str(self.dropoff) 
     def __str__(self):
-        return "name:" + str(self.name) + ", arrival: "+ str(self.arrival) + ", pickup:" + str(self.pickup) + " dest:" + str(self.dest) 
+        return "name:" + str(self.name) + ", arrival: "+ str(self.arrival) + ", pickup:" + str(self.pickup) + " dropoff:" + str(self.dropoff) 
       
 
 class Zone:

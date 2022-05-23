@@ -24,10 +24,10 @@ def generate_customer_list(total_time = 3600, size = 500 ):
         print(f"Customer name: {customers[i].name}")
         print(f"Customer arrival: {customers[i].arrival}")
         print(f"Customer pickup: {customers[i].pickup}")
-        print(f"Customer dest: {customers[i].dest}\n")
+        print(f"Customer dropoff: {customers[i].dropoff}\n")
     i = -1
     print(f"Customer name: {customers[i].name}")
     print(f"Customer arrival: {customers[i].arrival}")
     print(f"Customer pickup: {customers[i].pickup}")
-    print(f"Customer dest: {customers[i].dest}\n")
+    print(f"Customer dropoff: {customers[i].dropoff}\n")
     '''
