@@ -80,6 +80,7 @@ tt = TravelTime()
 while MIN_HEAP:
     obj = heapq.heappop(MIN_HEAP)
     curr_time = obj[0]
+    print('curr_time', curr_time, obj)
     class_type = obj[1]
     obj_name = obj[2]
     #print(obj)
@@ -122,7 +123,7 @@ while MIN_HEAP:
                 vehicle.path = deque(reconst_path)
                 time_add += tt.next_time(vehicle.path[0], vehicle.path[1])
             
-                heapq.heappush(MIN_HEAP, (curr_time + (time_add-curr_time)//2, 'v', vehicle.name, vehicle.id, 1))
+                heapq.heappush(MIN_HEAP, (curr_time + (time_add//2), 'v', vehicle.name, vehicle.id, 1))
             heapq.heappush(MIN_HEAP, (curr_time + time_add, 'v', vehicle.name, vehicle.id, 2))
 
         else: # different zone
@@ -148,7 +149,7 @@ while MIN_HEAP:
             
             time_add = tt.next_time(vehicle.path[0], vehicle.path[1]) # vehicle -> customer_pickup
 
-            heapq.heappush(MIN_HEAP, (curr_time + (time_add-curr_time)//2, 'v', vehicle.name, vehicle.id, 1))
+            heapq.heappush(MIN_HEAP, (curr_time + (time_add//2), 'v', vehicle.name, vehicle.id, 1))
             heapq.heappush(MIN_HEAP, (curr_time + time_add, 'v', vehicle.name, vehicle.id, 2))
         
         print('pickup reserved vehicle:',vehicle)
@@ -185,7 +186,7 @@ while MIN_HEAP:
             if len(vehicle.dest) >= 1: # more dest remained
                 time_add = tt.next_time(vehicle.path[0], vehicle.path[1])
             
-                heapq.heappush(MIN_HEAP, (curr_time + (time_add-curr_time)//2, 'v', vehicle.name, vehicle.id, 1))
+                heapq.heappush(MIN_HEAP, (curr_time + (time_add//2), 'v', vehicle.name, vehicle.id, 1))
                 heapq.heappush(MIN_HEAP, (curr_time + time_add, 'v', vehicle.name, vehicle.id, 2))
             else: # path end => travel end
                 if len(vehicle.customer_ids) > 0:
