@@ -1,4 +1,5 @@
 import collections
+from copy import deepcopy
 import time
 
 from vehicle import Vehicle
@@ -243,24 +244,24 @@ class Graph():
           return L3, total_cost
       return L3, total_cost
 
-    def findVehiclesWithinDelta_BFS(self, vehicle_location_dic, customer_location, wait_limit= float('inf')):
+    def findVehiclesWithinDelta_BFS(self, vehicle_location_dic_ori, customer_location, wait_limit= float('inf'), customer_limit=1):
       deq = collections.deque([(customer_location, 0)]) # (node, cost) 
       # for return
       selected_vehicles = []
-      
+      vehicle_location_dic = deepcopy(vehicle_location_dic_ori)
       visited_map = collections.defaultdict(lambda: float('inf')) # map[node] = minimum_cost
       visited_map[customer_location] = 0 # start node
 
       while deq:
         node, cost = deq.popleft()
-        #print(node,cost)
+        #print(node,cost,node in vehicle_location_dic)
         if node in vehicle_location_dic and cost < wait_limit:
           for v in vehicle_location_dic[node]: # vehicle_location_dic[node] = set([vehicles])
             # add contraint like number of customers in this vehicle !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if len(v.customer_ids) < 6:
-              selected_vehicles.append((cost,v))
+            if len(v.customer_ids) < customer_limit:
+              selected_vehicles.append((cost,v.name))
           del vehicle_location_dic[node] # to remove duplicate case
-        
+
         # add neighbor nodes to deque
         for new_node, weight in self.get_reverse_neighbors(node):
           new_cost = cost + weight
@@ -283,9 +284,11 @@ class Graph():
           cost_difference = new_cost - v.cost # new_cost - old_cost
           if self.print:
             print("v.name", v.name,"new_cost vs old_cost", new_cost, v.cost, "cost_difference", cost_difference)
-          if cost_difference < least_cost_difference:
+          if cost_difference < least_cost_difference: # choose best vehicle
             selected_vehicle = v
-            v.path = result[0]
+            selected_vehicle_path = result[0]
             cost = new_cost
             least_cost_difference = cost_difference
+      
+      selected_vehicle.path = selected_vehicle_path
       return selected_vehicle, cost
