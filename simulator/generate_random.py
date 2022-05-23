@@ -159,7 +159,7 @@ def gen_expon(size: int):
     # print(f"Poisson: {poisson}")
 
 class TravelTime:
-    def __init__(self, size=500):
+    def __init__(self, size=4):
         self.size = size
         self.travel_times = self._generate_travel_dist()
 
