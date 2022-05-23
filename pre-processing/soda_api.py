@@ -164,11 +164,14 @@ class DataGenerator:
                     best_name, best_params = self.get_best_fit(travel_times, output_file)
                     print(f"Best Fit returned: {best_name}")
                     print(f"Dist Params: {best_params}")
-                    
+                    best_dist = getattr(st, best_name)
+                    mean = best_dist.stats(best_params[0], best_params[1], best_params[2], moments="m")
+                    print(f"Mean: {mean}")
 
                     travel_time_dists[start_zone][end_zone] = {
                         "dist_name": best_name,
                         "dist_params": best_params,
+                        "mean": float(mean),
                         "sample_count": len(travel_times)
                     }
 
@@ -218,6 +221,7 @@ class DataGenerator:
 
             best_name, best_params = self.get_best_fit(arrivals, output_file, dist_names=["expon"])
             print(f"Best fit: {best_name}")
+            
 
         inter_arrival = {
             "zone_probs": zone_probs, 
@@ -300,9 +304,9 @@ def main():
     """
     output_path = "data/dist_small/"
     data_gen = DataGenerator()
-    # data_gen.generate_travel_time_hist(ZONE_IDS, output_path)
+    data_gen.generate_travel_time_hist(ZONE_IDS, output_path)
     # data_gen.populate_arrival_times()
-    data_gen.generate_arrival_time_dist(ZONE_IDS, "data/dist_small")
+    # data_gen.generate_arrival_time_dist(ZONE_IDS, "data/dist_small")
 
     # for pickup in ZONE_IDS:
     #     for dropoff in ZONE_IDS:
