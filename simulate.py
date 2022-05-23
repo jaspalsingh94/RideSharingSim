@@ -23,6 +23,10 @@ def generate_customer_list(total_time = 3600):
         print(f"Customer arrival: {customers[i].arrival}")
         print(f"Customer pickup: {customers[i].pickup}")
         print(f"Customer dest: {customers[i].dest}\n")
-
+    i = -1
+    print(f"Customer name: {customers[i].name}")
+    print(f"Customer arrival: {customers[i].arrival}")
+    print(f"Customer pickup: {customers[i].pickup}")
+    print(f"Customer dest: {customers[i].dest}\n")
 
 generate_customer_list()
