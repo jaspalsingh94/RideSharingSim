@@ -259,7 +259,7 @@ class Graph():
           for v in vehicle_location_dic[node]: # vehicle_location_dic[node] = set([vehicles])
             # add contraint like number of customers in this vehicle !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             if len(v.customer_ids) < customer_limit:
-              selected_vehicles.append((cost,v.name))
+              selected_vehicles.append((cost,v))
           del vehicle_location_dic[node] # to remove duplicate case
 
         # add neighbor nodes to deque

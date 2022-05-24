@@ -103,7 +103,7 @@ while MIN_HEAP:
                 best_vehicle = v
                 best_vehicle_cost = cost
         
-        vehicle = vehicle_dic[best_vehicle] # get original object
+        vehicle = vehicle_dic[best_vehicle.name] # get original object
         
         vehicle.dest.add(customer.dropoff)
         vehicle.dest_customer[customer.dropoff].append(customer.name)
