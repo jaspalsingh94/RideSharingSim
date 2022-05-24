@@ -89,16 +89,16 @@ while MIN_HEAP:
         #customer.pickup
         #customer.dropoff
 
-        results = graph.findVehiclesWithinDelta_BFS(vehicle_location_dic, customer.pickup, wait_limit)
+        selected_vehicle_list = graph.findVehiclesWithinDelta_BFS(vehicle_location_dic, customer.pickup, wait_limit)
         
-        if not results:
+        if not selected_vehicle_list:
             rejected_customer_cnt += 1
             #print('customer_rejected')
             continue
         
         best_vehicle_cost = math.inf
         best_vehicle = None # vehicle name
-        for cost, v in results: 
+        for cost, v in selected_vehicle_list: 
             if cost < best_vehicle_cost:        # pick the best vehicle
                 best_vehicle = v
                 best_vehicle_cost = cost
@@ -116,8 +116,9 @@ while MIN_HEAP:
             time_add = tt.next_time(vehicle.node, customer.pickup) // 2 # travel to same zone (for pickup)
 
             if customer.pickup == customer.dropoff:
-                if not vehicle.path:
-                    vehicle.path.append(vehicle.node)
+                #!!!!!!!!!!!!! need to get distance for same zone
+                #vehicle.total_miles += DISTANCES[prev][vehicle.node]
+                time_add += tt.next_time(customer.pickup, customer.dropoff) // 2
             else: # diff zone (customer.pickup and customer.dropoff)
                 final_cost, reconst_path, _, _ = graph.a_star_algorithm(customer.pickup, customer.dropoff)
                 vehicle.path = deque(reconst_path)
