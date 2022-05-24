@@ -16,6 +16,8 @@ class Vehicle():
     self.path = deque()     # From current to last destination
     self.dest_customer = defaultdict(list) # dest_customer[node_id] =  [ customer_id s ]
     self.customer_ids = set()
+    self.cost = 0
+    
     self.total_miles  = 0#add up as you go
 
 
