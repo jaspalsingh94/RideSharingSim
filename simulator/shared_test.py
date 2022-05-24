@@ -110,7 +110,7 @@ def runTEST(M, map, graph, vehicle_location_dic, print_b):
   ################ TEST START
   # 2. Select available vehicles from all vehicles by findVehiclesWithinDelta_BFS function (so it returns vehicle_list not just one vehicle)
   selected_vehicle_list = graph.findVehiclesWithinDelta_BFS(vehicle_location_dic, new_customer_location, new_customer_wait_limit) # result = [ (cost, vehicle) ]
-  selected_vehicle_list = [vehicle for cost, vehicle in selected_vehicle_list] # result = [vehicle]
+  selected_vehicle_list = [vehicle for _, vehicle in selected_vehicle_list] # result = [vehicle]
   if print_b:
     print('selected_vehicle by reversedBFS:', selected_vehicle_list)
     print("number of selected_vehicle by reversedBFS:",len(selected_vehicle_list))
