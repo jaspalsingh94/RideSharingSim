@@ -1,10 +1,9 @@
 from vehicle import Vehicle
 from graph import Graph
 
-import random
 import collections
 import heapq
-import math
+import uuid
 from collections import deque
 
 from object_model import DISTANCES
@@ -40,7 +39,7 @@ def make_map(): # each cost is random: 1 ~ max_cost
     return graph
 
 
-customers = generate_customer_list(size=50)
+customers = generate_customer_list(size=4)
 map_ = make_map()
 rejected_customer_cnt = 0
 rejected_event_cnt = 0
@@ -58,6 +57,7 @@ MIN_HEAP = [ (cu.arrival, 'c', cu.name) for cu in customers]
 heapq.heapify(MIN_HEAP)
 #print(MIN_HEAP)
 
+customer_limit = 3
 ############### WAIT LIMIT
 wait_limit = 3000
 ############# vehicle_dic[v.name] = vehicle object
@@ -74,7 +74,7 @@ for node_id in map_:
 
 print('len(vehicle_location_dic)',len(vehicle_location_dic))
 graph = Graph(map_)
-
+graph.setPrint(False)
 tt = TravelTime()
 
 while MIN_HEAP:
@@ -86,72 +86,115 @@ while MIN_HEAP:
     #print(obj)
     if class_type == 'c': # generate customer request
         customer = dic_customer[obj_name]
-        #customer.pickup
-        #customer.dropoff
 
-        selected_vehicle_list = graph.findVehiclesWithinDelta_BFS(vehicle_location_dic, customer.pickup, wait_limit)
+        selected_vehicle_list = graph.findVehiclesWithinDelta_BFS(vehicle_location_dic, customer.pickup, wait_limit,customer_limit)
         
         if not selected_vehicle_list:
             rejected_customer_cnt += 1
             #print('customer_rejected')
             continue
         
-        best_vehicle_cost = math.inf
-        best_vehicle = None # vehicle name
-        for cost, v in selected_vehicle_list: 
-            if cost < best_vehicle_cost:        # pick the best vehicle
-                best_vehicle = v
-                best_vehicle_cost = cost
+        best_vehicle_cost = float('inf')
+        least_cost_difference = float('inf')
+        best_vehicle = None
         
-        vehicle = vehicle_dic[best_vehicle] # get original object
+        for cost, v in selected_vehicle_list:
+            if v.dest: # if vehicle already has  destinations
+                result = graph.EAMDSP(v.node, v.dest, customer.pickup, customer.dropoff, wait_limit) #new_customer_wait_limit
+                if not result[0]:
+                    print(v.name + "request has been dropped due to new_customer_wait_limit(delta)")
+                else:
+                    new_cost = result[1]
+                    cost_difference = new_cost - v.cost # new_cost - old_cost
+                if graph.print:
+                    print("v.name", v.name,"new_cost vs old_cost", new_cost, v.cost, "cost_difference", cost_difference)
+                if cost_difference < least_cost_difference: # choose best vehicle
+                    best_vehicle = v
+                    best_vehicle_path = result[0]
+                    best_vehicle_cost = new_cost
+                    least_cost_difference = cost_difference
+            else: # if vehicle does NOT have destination
+                if cost < least_cost_difference:        # pick the best vehicle
+                    best_vehicle = v
+                    best_vehicle_cost = cost
         
-        vehicle.dest.add(customer.dropoff)
-        vehicle.dest_customer[customer.dropoff].append(customer.name)
-        vehicle.customer_ids.add(customer.name)
-
+        best_vehicle.cost = best_vehicle_cost
+        vehicle = vehicle_dic[best_vehicle.name] # get original object
         
-        if vehicle.node == customer.pickup: # same zone
-            #!!!!!!!!!!!!! need to get distance for same zone
-            #vehicle.total_miles += DISTANCES[prev][vehicle.node]
-            time_add = tt.next_time(vehicle.node, customer.pickup) // 2 # travel to same zone (for pickup)
-
-            if customer.pickup == customer.dropoff:
-                if not vehicle.path:
-                    vehicle.path.append(vehicle.node)
-            else: # diff zone (customer.pickup and customer.dropoff)
-                final_cost, reconst_path, _, _ = graph.a_star_algorithm(customer.pickup, customer.dropoff)
-                vehicle.path = deque(reconst_path)
-                time_add += tt.next_time(vehicle.path[0], vehicle.path[1])
+        if vehicle.dest: # if best_vehicle WITH destination is selected
+            vehicle.path = deque(best_vehicle_path) # this path already has customer.pickup and customer.dropoff BY EAMDSP algorithm
+            vehicle.id = uuid.uuid4() # generate new id (to reject old events)
+        
+            vehicle.dest.add(customer.dropoff)
+            vehicle.dest_customer[customer.dropoff].append(customer.name)
+            vehicle.customer_ids.add(customer.name)
             
+            time_add = 0
+
+            if vehicle.node == customer.pickup: # if vehicle is located in new customer
+            #!!!!!!!!!!!!! need to get distance for same zone
+            #add_miles += DISTANCES[prev][vehicle.node] -> 
+                time_add += tt.next_time(vehicle.node, customer.pickup) // 2 # travel to same zone (for pickup)
+            
+            if vehicle.node in vehicle.dest:    # if vehicle is located in some destination
+                for old_customer in vehicle.dest_customer[vehicle.node]: # for all customers who have destination == current_node
+                    #!!!!!!!!!!!!! need to get distance for same zone
+                    #add_miles += DISTANCES[prev][vehicle.node] -> 
+                    time_add += tt.next_time(vehicle.node, vehicle.node) // 2 # travel to same zone (for pickup)
+                
+            if time_add == 0:
+                time_add = tt.next_time(vehicle.path[0], vehicle.path[1]) 
                 heapq.heappush(MIN_HEAP, (curr_time + (time_add//2), 'v', vehicle.name, vehicle.id, 1))
             heapq.heappush(MIN_HEAP, (curr_time + time_add, 'v', vehicle.name, vehicle.id, 2))
 
-        else: # different zone
-            final_cost, reconst_path_1, _, _ = graph.a_star_algorithm(vehicle.node, customer.pickup)
-            
-            if customer.pickup == customer.dropoff:
-                vehicle.path = deque(reconst_path_1)
-            else: # same zone (customer.pickup and customer.dropoff)
-                final_cost, reconst_path_2, _, _ = graph.a_star_algorithm(customer.pickup, customer.dropoff)
-                reconst_path_1.pop()
-                vehicle.path = deque(reconst_path_1 + reconst_path_2)
-
-            # test -- check continuous two nodes
-            if len(vehicle.path) >= 1:
-                prev_node = vehicle.path[0]
-                #print(vehicle.path)
-                for node in list(vehicle.path)[1:]:
-                    if prev_node == node:
-                        print('!! continuous two nodes', prev_node, node)
-                        raise Exception()
-                    prev_node = node
-            # -- check continuous two nodes
-            
-            time_add = tt.next_time(vehicle.path[0], vehicle.path[1]) # vehicle -> customer_pickup
-
-            heapq.heappush(MIN_HEAP, (curr_time + (time_add//2), 'v', vehicle.name, vehicle.id, 1))
-            heapq.heappush(MIN_HEAP, (curr_time + time_add, 'v', vehicle.name, vehicle.id, 2))
+        else: # if best_vehicle WITHOUT destination is selected
+            vehicle.dest.add(customer.dropoff)
+            vehicle.dest_customer[customer.dropoff].append(customer.name)
+            vehicle.customer_ids.add(customer.name)
         
+            if vehicle.node == customer.pickup: # same zone
+                #!!!!!!!!!!!!! need to get distance for same zone
+                #vehicle.total_miles += DISTANCES[prev][vehicle.node]
+                time_add = tt.next_time(vehicle.node, customer.pickup) // 2 # travel to same zone (for pickup)
+
+                if customer.pickup == customer.dropoff:
+                    #!!!!!!!!!!!!! need to get distance for same zone
+                    #vehicle.total_miles += DISTANCES[prev][vehicle.node]
+                    time_add += tt.next_time(customer.pickup, customer.dropoff) // 2
+                else: # diff zone (customer.pickup and customer.dropoff)
+                    final_cost, reconst_path, _, _ = graph.a_star_algorithm(customer.pickup, customer.dropoff)
+                    vehicle.path = deque(reconst_path)
+                    time_add += tt.next_time(vehicle.path[0], vehicle.path[1])
+                
+                    heapq.heappush(MIN_HEAP, (curr_time + (time_add//2), 'v', vehicle.name, vehicle.id, 1))
+                heapq.heappush(MIN_HEAP, (curr_time + time_add, 'v', vehicle.name, vehicle.id, 2))
+
+            else: # different zone
+                final_cost, reconst_path_1, _, _ = graph.a_star_algorithm(vehicle.node, customer.pickup)
+                
+                if customer.pickup == customer.dropoff:
+                    vehicle.path = deque(reconst_path_1)
+                else: # same zone (customer.pickup and customer.dropoff)
+                    final_cost, reconst_path_2, _, _ = graph.a_star_algorithm(customer.pickup, customer.dropoff)
+                    reconst_path_1.pop()
+                    vehicle.path = deque(reconst_path_1 + reconst_path_2)
+
+                # test -- check continuous two nodes
+                if len(vehicle.path) >= 1:
+                    prev_node = vehicle.path[0]
+                    #print(vehicle.path)
+                    for node in list(vehicle.path)[1:]:
+                        if prev_node == node:
+                            print('!! continuous two nodes', prev_node, node)
+                            raise Exception()
+                        prev_node = node
+                # -- check continuous two nodes
+                
+                time_add = tt.next_time(vehicle.path[0], vehicle.path[1]) # vehicle -> customer_pickup
+
+                heapq.heappush(MIN_HEAP, (curr_time + (time_add//2), 'v', vehicle.name, vehicle.id, 1))
+                heapq.heappush(MIN_HEAP, (curr_time + time_add, 'v', vehicle.name, vehicle.id, 2))
+            
         print('pickup reserved vehicle:',vehicle)
         print('pickup reserved customer:', customer)
 
@@ -160,7 +203,7 @@ while MIN_HEAP:
         vehicle_id = obj[3]
         vehicle = vehicle_dic[obj_name]
         if vehicle_id != vehicle.id: # vehicle was updated. -> reject the event
-            print('vehicle_id != vehicle.id:')
+            print('vehicle_id != vehicle.id: rejected_event_cnt')
             rejected_event_cnt += 1
             continue
 
@@ -184,6 +227,7 @@ while MIN_HEAP:
                 vehicle.dest_customer[vehicle.node] = []
             
             if len(vehicle.dest) >= 1: # more dest remained
+                print(vehicle)
                 time_add = tt.next_time(vehicle.path[0], vehicle.path[1])
             
                 heapq.heappush(MIN_HEAP, (curr_time + (time_add//2), 'v', vehicle.name, vehicle.id, 1))
