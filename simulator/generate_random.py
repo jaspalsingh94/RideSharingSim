@@ -15,7 +15,12 @@ ARRIVAL_PROB = {
     "sample_count": 316752,
 }
 
-ZONE_PROBS_CUMM = {'107': 0.26268750726179774, '234': 0.5564402208809553, '90': 0.7827575874320447, '164': 1.0}
+ZONE_PROBS_CUMM = {
+    "107": 0.26268750726179774,
+    "234": 0.5564402208809553,
+    "90": 0.7827575874320447,
+    "164": 1.0,
+}
 
 TRAVEL_TIMES = {
     "107": {
@@ -125,45 +130,44 @@ TRAVEL_TIMES = {
 }
 
 
-def generate_pickup_zone():
+def generate_pickup_zone(random_var: float = None):
     """
     Generates the pick up zone.
     """
-    rand = random.random()
+    rand = random.random() if not random_var else random_var
     for zone in ZONE_PROBS_CUMM:
         if rand <= ZONE_PROBS_CUMM[zone]:
-            return zone
+            return zone, rand
 
 
-def generate_dropoff_zone():
+def generate_dropoff_zone(random_var: float = None):
     """
     Generate the drop off zone.
     """
-    rand = random.random()
+    rand = random.random() if not random_var else random_var
     if rand <= 0.25:
-        return '107'
+        return "107", rand
     elif rand <= 0.5:
-        return '234'
+        return "234", rand
     elif rand <= 0.75:
-        return '90'
-    return '164'
+        return "90", rand
+    return "164", rand
 
 
 def gen_expon(size: int):
-    """ 
-    """
+    """ """
     expon_gen = st.expon.rvs(1.0, 18.107468934687073, size=size)
     return expon_gen
 
     # poisson = st.poisson.rvs(total_time * (1 / 18.1074689))
     # print(f"Poisson: {poisson}")
 
+
 class TravelTime:
-    def __init__(self, size=4):
+    def __init__(self, size=500):
         self.size = size
         self.travel_times = self._generate_travel_dist()
 
-    
     def _generate_travel_dist(self):
         """
         Generates travel distributions.
@@ -174,12 +178,14 @@ class TravelTime:
             for zone_2 in TRAVEL_TIMES[zone_1]:
                 travel_times[zone_1][zone_2] = {}
                 distribution = getattr(st, TRAVEL_TIMES[zone_1][zone_2]["dist_name"])
-                travel_times[zone_1][zone_2]["times"] = list(distribution.rvs(
-                    TRAVEL_TIMES[zone_1][zone_2]["dist_params"][0],
-                    TRAVEL_TIMES[zone_1][zone_2]["dist_params"][1],
-                    TRAVEL_TIMES[zone_1][zone_2]["dist_params"][2],
-                    size=self.size
-                ))
+                travel_times[zone_1][zone_2]["times"] = list(
+                    distribution.rvs(
+                        TRAVEL_TIMES[zone_1][zone_2]["dist_params"][0],
+                        TRAVEL_TIMES[zone_1][zone_2]["dist_params"][1],
+                        TRAVEL_TIMES[zone_1][zone_2]["dist_params"][2],
+                        size=self.size,
+                    )
+                )
                 travel_times[zone_1][zone_2]["next"] = 0
         return travel_times
 
@@ -187,10 +193,11 @@ class TravelTime:
         """
         Returns the next travel time for zone_1 -> zone_2.
         """
-        next_idx =  self.travel_times[zone_1][zone_2]["next"]
+        next_idx = self.travel_times[zone_1][zone_2]["next"]
         next_time = self.travel_times[zone_1][zone_2]["times"][next_idx]
         self.travel_times[zone_1][zone_2]["next"] = next_idx + 1
         return next_time
+
 
 # tt = TravelTime()
 # print(f"All times: {tt.travel_times}")
