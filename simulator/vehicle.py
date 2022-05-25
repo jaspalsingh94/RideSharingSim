@@ -14,7 +14,8 @@ class Vehicle():
     self.dest = dest 	# SET() 
     self.status = self.WAIT # WAIT, TO_CUSTOMER, TO_DESTINATION
     self.path = deque()     # From current to last destination
-    self.dest_customer = defaultdict(list) # dest_customer[node_id] =  [ customer_id s ]
+    self.dest_customer = defaultdict(set) # dest_customer[destination node_id] =  [ customer_id s ]
+    self.pick_customer = defaultdict(set) # dest_customer[pickup node_id] =  [ customer_id s ]
     self.customer_ids = set()
     self.cost = 0
 
