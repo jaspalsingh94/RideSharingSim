@@ -19,7 +19,7 @@ class Vehicle():
     self.customer_ids = set()
     self.cost = 0
 
-    self.total_miles  = 0#add up as you go
+    self.total_meters  = 0#add up as you go
 
 
   def start_move_to_customer(self):
