@@ -38,8 +38,23 @@ def generate_confidence_intervals():
             print(f"Customers: {customers}, +- {(customers[1] - customers[0]) / 2}")
             print("-----------------------------------------------------\n")
 
+def generate_ci_meters():
+    json_in = {}
+    with open("data/simulated_trips.json", 'r') as open_json:
+        json_in = json.load(open_json)
+        for trip in json_in:
+            shared_meter_data = []
+            no_shared_meter_data = []
+            for shared_meter, no_shared_meter, rejected_custmer, customer in zip(json_in[trip][2], json_in[trip][3], json_in[trip][0],json_in[trip][4]):
+                shared_meter_data.append(shared_meter / (customer-rejected_custmer))
+            for shared_meter, no_shared_meter, rejected_custmer, customer in zip(json_in[trip][2], json_in[trip][3], json_in[trip][1],json_in[trip][4]):
+                no_shared_meter_data.append(no_shared_meter / (customer-rejected_custmer))
 
+            shared_meter_data_ci = generate_95_confidence(shared_meter_data)
+            no_shared_meter_data_ci = generate_95_confidence(no_shared_meter_data)
 
+            print(f"shared_meter_data: {shared_meter_data_ci}, +- {(shared_meter_data_ci[1] - shared_meter_data_ci[0]) / 2}")
+            print(f"no_shared_meter_data: {no_shared_meter_data_ci}, +- {(no_shared_meter_data_ci[1] - no_shared_meter_data_ci[0]) / 2}")
 
-
-generate_confidence_intervals()
+#generate_confidence_intervals()
+generate_ci_meters()
