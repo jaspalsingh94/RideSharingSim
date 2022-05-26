@@ -17,7 +17,7 @@ def generate_customer_list(total_time=3600, size=500):
         if time_so_far > total_time:
             if len(customers) % 2 == 0:
                 break
-    print(f"Length of customers: {len(customers)}")
+    # print(f"Length of customers: {len(customers)}")
     mid_point = int(len(customers) / 2)
 
     # testing_rand = [generate_pickup_zone() for i in range(mid_point * 2)]
@@ -42,8 +42,8 @@ def generate_customer_list(total_time=3600, size=500):
         customers[i].pickup = pick_up_zones[i][0]
         customers[i].dropoff = drop_off_zones[i][0]
 
-    print(f"Time so far: {time_so_far}")
-    print(f"Lenght of Customers: {len(customers)}")
+    # print(f"Time so far: {time_so_far}")
+    # print(f"Lenght of Customers: {len(customers)}")
     return customers
     """
     print(f"Time so far: {time_so_far}")

@@ -1,6 +1,7 @@
 from vehicle import Vehicle
 from graph import Graph
 
+import pickle
 import collections
 import heapq
 import uuid
@@ -36,13 +37,21 @@ def make_map(): # each cost is random: 1 ~ max_cost
                 #print('ad')
                 weight = TRAVEL_TIMES[node][node2]['mean']
                 graph[node].append((node2,weight))
-        
+    with open('data/map_graph.pickle', 'wb') as handle:
+        pickle.dump(graph, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    # return graph
+
+
+def get_map():
+    with open('data/map_graph.pickle', 'rb') as handle:
+        graph = pickle.load(handle)
     return graph
 
 
 def simulation_test(customers, customer_limit=1, wait_limit=900, VEHICLE_NUM_PER_ZONE=1, printB=False):
     #customers = generate_customer_list(size=50)
-    map_ = make_map()
+    # make_map()
+    map_ = get_map()
     rejected_customer_cnt = 0
     rejected_event_cnt = 0
     dropoff_cnt = 0
@@ -93,8 +102,8 @@ def simulation_test(customers, customer_limit=1, wait_limit=900, VEHICLE_NUM_PER
             
             if not selected_vehicle_list:
                 rejected_customer_cnt += 1
-                customer.arrival += 180.0
-                heapq.heappush(MIN_HEAP, (customer.arrival, 'c', customer.name)) # re-request after 500s
+                # customer.arrival += 180.0
+                # heapq.heappush(MIN_HEAP, (customer.arrival, 'c', customer.name)) # re-request after 500s
                 #if printB: print('customer_rejected')
                 continue
             
